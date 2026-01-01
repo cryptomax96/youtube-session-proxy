@@ -5,7 +5,7 @@
  * to match the format expected by Cobalt's YOUTUBE_SESSION_SERVER.
  * 
  * bgutil returns:  { contentBinding, poToken, expiresAt }
- * Cobalt expects:  { visitor_data, potoken }
+ * Cobalt expects:  { visitor_data, potoken, updated }
  */
 
 const express = require('express');
@@ -41,12 +41,14 @@ app.get('/token', async (req, res) => {
     console.log('[proxy] bgutil response received, transforming...');
 
     // Transform to Cobalt's expected format
+    // Cobalt expects: visitor_data, potoken, and updated timestamp
     const cobaltFormat = {
       visitor_data: data.contentBinding,
-      potoken: data.poToken
+      potoken: data.poToken,
+      updated: Date.now()  // Cobalt needs this timestamp
     };
 
-    console.log('[proxy] Sending transformed response');
+    console.log('[proxy] Sending transformed response with updated timestamp');
     res.json(cobaltFormat);
 
   } catch (error) {
